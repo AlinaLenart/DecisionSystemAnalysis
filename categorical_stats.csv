@@ -1,0 +1,8 @@
+Feature,Number of unique classes,Missing,Class proportion
+Department,4,0,CS: 40.44%; Engineering: 29.38%; Business: 20.12%; Mathematics: 10.06%
+Extracurricular_Activities,2,0,No: 69.86%; Yes: 30.14%
+Family_Income_Level,3,0,Low: 39.66%; Medium: 39.46%; High: 20.88%
+Gender,2,0,Male: 51.02%; Female: 48.98%
+Grade,5,0,A: 29.9%; B: 19.56%; D: 17.78%; F: 16.88%; C: 15.88%
+Internet_Access_at_Home,2,0,Yes: 89.7%; No: 10.3%
+Parent_Education_Level,4,1794,nan: 35.88%; PhD: 16.4%; Bachelor's: 16.2%; High School: 15.92%; Master's: 15.6%
