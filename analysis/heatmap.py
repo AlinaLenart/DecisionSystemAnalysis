@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 def save_heatmaps(df, output_dir):
@@ -9,30 +10,37 @@ def save_heatmaps(df, output_dir):
     numeric_df = df.select_dtypes(include=['number'])
     correlation_matrix = numeric_df.corr()
     plt.figure(figsize=(12, 6))
-    sns.heatmap(correlation_matrix, annot=True, cmap="cividis", fmt=".3f", linewidths=0.5)
+    sns.heatmap(correlation_matrix, annot=True, cmap="YlGnBu", fmt=".3f", linewidths=0.5)
     plt.title("The Correlation ")
     plt.savefig(os.path.join(output_dir, "heatmap1.png"))
     plt.close()
 
-    df['Family_Income_Level'] = df['Family_Income_Level'].map({'High': 2, 'Medium': 1, 'Low': 0})
-    df['Parent_Education_Level'] = df['Parent_Education_Level'].map({'PhD': 5, "Master's": 4, "Bachelor's": 3, 'High School': 2, 'Missing': 1})
-    df['Internet_Access_at_Home'] = df['Internet_Access_at_Home'].map({'Yes': 2, 'No': 1})
-    df['Extracurricular_Activities'] = df['Extracurricular_Activities'].map({'Yes': 2, 'No': 1})
+    score_dict = {
+        "Participation_Score": 0.05,
+        "Assignments_Avg": 0.05,
+        "Quizzes_Avg": 0.1,
+        "Projects_Score": 0.15,
+        "Midterm_Score": 0.25,
+        "Final_Score": 0.4
+    }
 
-    selected_columns = [
-        'Attendance (%)', 'Midterm_Score', 'Final_Score', 'Assignments_Avg', 
-        'Quizzes_Avg', 'Participation_Score', 'Projects_Score', 'Total_Score', 
-        'Study_Hours_per_Week', 'Extracurricular_Activities', 'Internet_Access_at_Home',
-        'Parent_Education_Level', 'Family_Income_Level', 'Stress_Level (1-10)', 
-        'Sleep_Hours_per_Night'
-    ]
+    # Obliczenie tymczasowego Total_Score
+    aggregate = np.zeros(len(df))
+    for col, weight in score_dict.items():
+        aggregate += df[col].values * weight
 
-    df_selected = df[selected_columns].copy()
+    # Tymczasowy DataFrame do korelacji
+    aggregate_cols = list(score_dict.keys())
+    temp_df = df[aggregate_cols].copy()
+    temp_df["Calculated_Total_Score"] = aggregate
 
-    corr_matrix = df_selected.corr()
+    # Korelacja z przeliczoną wartością
+    corr = temp_df.corr().abs()
 
-    plt.figure(figsize=(12, 8))
-    sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
-    plt.title("Correlation Matrix Heatmap")
+    # Wizualizacja
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(corr, cmap='YlGnBu', annot=True, fmt=".2f", linewidths=0.5)
+    plt.title("Correlation with Recalculated Total Score")
+    plt.tight_layout()
     plt.savefig(os.path.join(output_dir, "heatmap2.png"))
     plt.close()

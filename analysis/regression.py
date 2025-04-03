@@ -4,28 +4,20 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def save_regressions(df, output_dir):
-    target_col = 'Total_Score'
+    sns.set_style("whitegrid")
 
-    num_cols = [
-        'Attendance (%)', 'Midterm_Score', 'Final_Score',
-        'Assignments_Avg', 'Quizzes_Avg', 'Participation_Score',
-        'Projects_Score', 'Study_Hours_per_Week',
-        'Stress_Level (1-10)', 'Sleep_Hours_per_Night'
-    ]
+    plt.figure(figsize=(8, 6))
+    sns.regplot(
+        data=df,
+        x="Study_Hours_per_Week",
+        y="Midterm_Score",
+        line_kws={'color': "red"},
+        scatter_kws={"alpha": 0.6, "s": 30}
+    )
 
-    sample_df = df.sample(n=int(len(df)*0.3), random_state=50)
-
-    fig, ax = plt.subplots(nrows=2, ncols=5, figsize=(16, 6))
-    i = 0
-
-    for row in range(2):
-        for col in range(5):
-            feature = num_cols[i]
-            sns.regplot(data=sample_df, x=feature, y=target_col, line_kws={'color': "red"}, ax=ax[row, col])
-            ax[row, col].set_title(feature)
-            i += 1
-
+    plt.title("Study Hours per Week vs Midterm Score")
+    plt.xlabel("Study Hours per Week")
+    plt.ylabel("Midterm Exam Score")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "regression.png"))
+    plt.savefig(os.path.join(output_dir, "regression_study_midterm.png"))
     plt.close()
-

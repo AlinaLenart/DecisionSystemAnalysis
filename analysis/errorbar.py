@@ -1,19 +1,26 @@
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numpy as np
 
 def save_errorbars(df, output_dir):
-# Konwersja na uporządkowaną kategorię (ważne!)
+    # Kopiujemy kolumny do tymczasowego DataFrame
+    temp_df = df[["Parent_Education_Level", "Total_Score"]].copy()
+
+    # Konwersja na kategorię uporządkowaną tylko w temp_df
     edu_order = ["High School", "Bachelor's", "Master's", "PhD"]
-    df["Parent_Education_Level"] = pd.Categorical(df["Parent_Education_Level"], categories=edu_order, ordered=True)
+    temp_df["Parent_Education_Level"] = pd.Categorical(
+        temp_df["Parent_Education_Level"],
+        categories=edu_order,
+        ordered=True
+    )
 
     # Grupowanie
     group_col = "Parent_Education_Level"
     value_col = "Total_Score"
 
-    grouped = df.groupby(group_col, observed=True)[value_col].agg(['mean', 'count', 'std']).reset_index()
+    grouped = temp_df.groupby(group_col, observed=True)[value_col].agg(['mean', 'count', 'std']).reset_index()
     grouped['se'] = grouped['std'] / np.sqrt(grouped['count'])
 
     # Wykres
@@ -29,12 +36,21 @@ def save_errorbars(df, output_dir):
         color='tab:green',
         linewidth=2
     )
-    ax1.set_title("Średni Total Score względem poziomu wykształcenia rodziców")
+    ax1.set_title("Average Total Score by Parent Education Level")
     ax1.set_ylabel("Total Score")
 
     # Dolny panel: rozrzut punktów
-    sns.stripplot(data=df, x=group_col, y=value_col, ax=ax2, jitter=0.25, alpha=0.6, color='tab:green', size=4)
-    ax2.set_title("Rozrzut wyników Total Score względem wykształcenia rodziców")
+    sns.stripplot(
+        data=temp_df,
+        x=group_col,
+        y=value_col,
+        ax=ax2,
+        jitter=0.25,
+        alpha=0.6,
+        color='tab:green',
+        size=4
+    )
+    ax2.set_title("Distribution of Total Score by Parent Education Level")
     ax2.set_xlabel("Parent Education Level")
     ax2.set_ylabel("Total Score")
 

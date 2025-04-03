@@ -13,7 +13,7 @@ def save_violinplots(df, output_dir):
     sns.violinplot(
         x=study_cats,
         y=df['Final_Score'],
-        palette="Set1",       # lub 'Set2', 'pastel', etc.
+        palette="crest",       
         inner="box"      # to dodaje kreski (25%, 50%, 75%)
     )
 
@@ -25,7 +25,7 @@ def save_violinplots(df, output_dir):
     plt.close()
 
     plt.figure(figsize=(12, 6))
-    sns.violinplot(x="Grade", y="Family_Income_Level", hue="Department", data=df, split=True, palette="coolwarm", inner=None)
+    sns.violinplot(x="Grade", y="Family_Income_Level", hue="Department", data=df, split=True, palette="crest", inner=None)
 
     # Set labels and title
     plt.xlabel("Grade")

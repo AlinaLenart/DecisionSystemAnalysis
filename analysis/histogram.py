@@ -1,38 +1,58 @@
 import os
 import pandas as pd
 import seaborn as sns
+import numpy as np
 import matplotlib.pyplot as plt
 
 
 def save_histograms(df, output_dir):
+    sns.set_style("whitegrid")
 
-    numeric_cols = df.select_dtypes(exclude="object").columns
+    # Sortowanie ocen alfabetycznie
+    grade_order = sorted(df["Grade"].dropna().unique())  # ['A', 'B', 'C', 'D', 'F']
+    df["Grade"] = pd.Categorical(df["Grade"], categories=grade_order, ordered=True)
 
-    nrows = 4
-    ncols = 3
-    i = 0
-    # use the default style
-    plt.style.use("default")
+    # Histogram warunkowany z wrapem
+    g = sns.displot(
+        data=df,
+        x="Final_Score",
+        hue="Gender",
+        col="Grade",
+        col_wrap=2,             # ⬅️ ustawia 2 kolumny na rząd
+        stat="percent",
+        bins=20,
+        multiple="stack",
+        palette="mako",
+        alpha=0.6,
+        height=4,
+        aspect=1.2
+    )
 
-    fig, ax = plt.subplots(nrows=nrows, ncols=ncols, figsize=(12, 12))
-
-    for row in range(nrows):
-        for col in range(ncols):
-            dist = df[numeric_cols[i]]
-            sns.histplot(dist, kde=True, alpha=.4, ax=ax[row, col])
-            if pd.api.types.is_numeric_dtype(dist):
-                ax[row, col].axvline(dist.mean(), color="r", linestyle='dashed', label=f"Mean: {int(dist.mean())}")
-                ax[row, col].axvline(dist.median(), color="black", linestyle='-.', label=f"Median: {int(dist.median())}")
-                ax[row, col].legend()
-            i+=1
-
-    plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "hist1.png"))
+    g.set_axis_labels("Final Score", "Percentage of Students")
+    g.fig.subplots_adjust(top=0.9)
+    g.fig.suptitle("Final Score Distribution by Grade and Gender", fontsize=16)
+    g.savefig(os.path.join(output_dir, "hist2.png"))
     plt.close()
+
     
+    sleep_hours_rounded = df["Sleep_Hours_per_Night"].round()
 
-    plt.figure(figsize=(10, 6))
-    sns.catplot(x='Department', hue='Gender', col='Grade', data=df, kind='count', height=5, aspect=1.5, alpha=0.45)
-    plt.title('Department -wise Gender Distribution by Grade')
-    plt.savefig(os.path.join(output_dir, "hist2.png"))
+    # Grupowanie
+    counts = df.groupby([sleep_hours_rounded, df["Department"]]).size().unstack(fill_value=0)
+    percent = counts.div(counts.sum(axis=0), axis=1) * 100
+
+    colors = sns.color_palette("crest", n_colors=percent.shape[1])
+
+    # Wykres
+    percent.plot(kind="bar", figsize=(12, 6), color=colors)
+
+    plt.title("Relative Sleep Hours Distribution by Department")
+    plt.xlabel("Sleep Hours per Night")
+    plt.ylabel("Percentage of Students")
+    plt.legend(title="Department")
+    plt.tight_layout()
+    plt.savefig(os.path.join(output_dir, "hist3.png"))
     plt.close()
+
+
+

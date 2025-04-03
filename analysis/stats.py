@@ -47,7 +47,7 @@ def calculate_statistics(df: pd.DataFrame) -> pd.DataFrame:
     stats_cat_df = pd.DataFrame(categorical_stats)
 
 
-    stats_num_df.to_csv("numeric_stats.csv", index=False)
-    stats_cat_df.to_csv("categorical_stats.csv", index=False)
+    stats_num_df.to_csv("outputs/numeric_stats.csv", index=False)
+    stats_cat_df.to_csv("outputs/categorical_stats.csv", index=False)
     
     pass
