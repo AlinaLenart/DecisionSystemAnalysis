@@ -1,38 +1,39 @@
 import os
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 
 def save_boxplots(df, output_dir):
-    # Kolumny do pominięcia
-    excluded_cols = {"Student_ID", "First_Name", "Last_Name", "Email"}
 
-    # Wybieramy tylko kolumny numeryczne z wyłączeniem excluded_cols
+    excluded_cols = {"Student_ID", "First_Name", "Last_Name", "Email"}
     numeric_cols = df.select_dtypes(include=["number"]).columns.difference(excluded_cols).tolist()
 
-    # Rysujemy boxplot dla cech numerycznych
     plt.figure(figsize=(10, 5))
-    sns.boxplot(data=df[numeric_cols])
+    sns.set_style("whitegrid")
+    sns.boxplot(data=df[numeric_cols], palette="rainbow")
     plt.title("Outlier Detection in Numerical Features")
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, "boxplot1.png"))
     plt.close()
 
-
     sorted_grades = sorted(df['Grade'].dropna().unique())
+    df['Grade'] = pd.Categorical(df['Grade'], categories=sorted_grades, ordered=True)
 
-    # Tworzymy boxplot z określoną kolejnością kategorii
     plt.figure(figsize=(10, 6))
-    # sns.boxplot(x='Grade', y='Attendance (%)', data=df, palette='coolwarm', order=sorted_grades)
-    plt.title('Boxplot of Grade vs Attendance (%)')
-    plt.xlabel('Grade')
-    plt.ylabel('Attendance (%)')
-    sns.boxplot(x="Grade",y="Attendance (%)",data=df.sort_values(by="Grade", ascending=[True]), palette="crest")
+    sns.set_style("whitegrid")
+    sns.boxplot(
+        x="Grade",
+        y="Attendance (%)",
+        hue="Grade",  
+        data=df.sort_values(by="Grade"),
+        palette="crest"
+    )
+
+    plt.title("Boxplot of Attendance (%) by Grade")
+    plt.xlabel("Grade")
+    plt.ylabel("Attendance (%)")
+    plt.tight_layout()
     plt.savefig(os.path.join(output_dir, "boxplot2.png"))
     plt.close()
-
-
-
-

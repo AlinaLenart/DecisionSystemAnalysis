@@ -1,24 +1,21 @@
 import os
 import pandas as pd
 import seaborn as sns
-import numpy as np
 import matplotlib.pyplot as plt
 
 
 def save_histograms(df, output_dir):
     sns.set_style("whitegrid")
 
-    # Sortowanie ocen alfabetycznie
-    grade_order = sorted(df["Grade"].dropna().unique())  # ['A', 'B', 'C', 'D', 'F']
+    grade_order = sorted(df["Grade"].dropna().unique()) 
     df["Grade"] = pd.Categorical(df["Grade"], categories=grade_order, ordered=True)
 
-    # Histogram warunkowany z wrapem
     g = sns.displot(
         data=df,
         x="Final_Score",
         hue="Gender",
         col="Grade",
-        col_wrap=2,             # ⬅️ ustawia 2 kolumny na rząd
+        col_wrap=2,             
         stat="percent",
         bins=20,
         multiple="stack",
@@ -34,16 +31,13 @@ def save_histograms(df, output_dir):
     g.savefig(os.path.join(output_dir, "hist2.png"))
     plt.close()
 
-    
     sleep_hours_rounded = df["Sleep_Hours_per_Night"].round()
 
-    # Grupowanie
     counts = df.groupby([sleep_hours_rounded, df["Department"]]).size().unstack(fill_value=0)
     percent = counts.div(counts.sum(axis=0), axis=1) * 100
 
     colors = sns.color_palette("crest", n_colors=percent.shape[1])
 
-    # Wykres
     percent.plot(kind="bar", figsize=(12, 6), color=colors)
 
     plt.title("Relative Sleep Hours Distribution by Department")

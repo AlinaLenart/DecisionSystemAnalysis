@@ -1,22 +1,27 @@
-from analysis.loader import load_data
-from analysis.stats import calculate_statistics
-from analysis.boxplot import save_boxplots
-from analysis.violinplot import save_violinplots
-from analysis.errorbar import save_errorbars
-from analysis.histogram import save_histograms
-from analysis.heatmap import save_heatmaps
-from analysis.regression import save_regressions
-
+from analysis import (
+    load_data,
+    calculate_statistics,
+    save_boxplots,
+    save_violinplots,
+    save_errorbars,
+    save_histograms,
+    save_heatmaps,
+    save_regressions,
+    save_pca
+)
 
 if __name__ == "__main__":
+
     df = load_data("data/Students_Grading_Dataset.csv")
     
     stats = calculate_statistics(df)
+    path_for_plots = "outputs/plots/"
 
-    save_boxplots(df, "outputs/plots/")
-    save_violinplots(df, "outputs/plots/")
-    save_errorbars(df, "outputs/plots/")
-    save_histograms(df, "outputs/plots/")
-    save_heatmaps(df, "outputs/plots/")
-    save_regressions(df,"outputs/plots/")
+    save_boxplots(df, path_for_plots)
+    save_violinplots(df, path_for_plots)
+    save_errorbars(df, path_for_plots)
+    save_histograms(df, path_for_plots)
+    save_heatmaps(df, path_for_plots)
+    save_regressions(df, path_for_plots)
+    save_pca(df, path_for_plots)
     

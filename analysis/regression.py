@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 def save_regressions(df, output_dir):
+
     sns.set_style("whitegrid")
 
     plt.figure(figsize=(8, 6))
@@ -19,5 +20,5 @@ def save_regressions(df, output_dir):
     plt.xlabel("Study Hours per Week")
     plt.ylabel("Midterm Exam Score")
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "regression_study_midterm.png"))
+    plt.savefig(os.path.join(output_dir, "regression.png"))
     plt.close()

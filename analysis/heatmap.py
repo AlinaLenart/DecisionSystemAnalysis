@@ -1,5 +1,4 @@
 import os
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -24,20 +23,16 @@ def save_heatmaps(df, output_dir):
         "Final_Score": 0.4
     }
 
-    # Obliczenie tymczasowego Total_Score
     aggregate = np.zeros(len(df))
     for col, weight in score_dict.items():
         aggregate += df[col].values * weight
 
-    # Tymczasowy DataFrame do korelacji
     aggregate_cols = list(score_dict.keys())
     temp_df = df[aggregate_cols].copy()
     temp_df["Calculated_Total_Score"] = aggregate
 
-    # Korelacja z przeliczoną wartością
     corr = temp_df.corr().abs()
 
-    # Wizualizacja
     plt.figure(figsize=(10, 6))
     sns.heatmap(corr, cmap='YlGnBu', annot=True, fmt=".2f", linewidths=0.5)
     plt.title("Correlation with Recalculated Total Score")

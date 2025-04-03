@@ -7,10 +7,8 @@ def calculate_statistics(df: pd.DataFrame) -> pd.DataFrame:
     # numeric_cols = [col for col in df.select_dtypes(include=[np.number]).columns if col not in excluded_cols]
     # categorical_cols = [col for col in df.select_dtypes(exclude=[np.number]).columns if col not in excluded_cols]
 
-
     numeric_cols = df.select_dtypes(include=[np.number]).columns.difference(excluded_cols).tolist()
     categorical_cols = df.select_dtypes(exclude=[np.number]).columns.difference(excluded_cols).tolist()
-
 
     numeric_stats = []
     categorical_stats = []
@@ -28,6 +26,7 @@ def calculate_statistics(df: pd.DataFrame) -> pd.DataFrame:
             "95th percentile": col_data.quantile(0.95),
             "Missing": col_data.isna().sum()
         }
+
         numeric_stats.append(stats)
 
     for col in categorical_cols:
@@ -40,12 +39,11 @@ def calculate_statistics(df: pd.DataFrame) -> pd.DataFrame:
             "Missing": col_data.isna().sum(),
             "Class proportion": class_props
         }
-        categorical_stats.append(stats)
 
+        categorical_stats.append(stats)
 
     stats_num_df = pd.DataFrame(numeric_stats)
     stats_cat_df = pd.DataFrame(categorical_stats)
-
 
     stats_num_df.to_csv("outputs/numeric_stats.csv", index=False)
     stats_cat_df.to_csv("outputs/categorical_stats.csv", index=False)
