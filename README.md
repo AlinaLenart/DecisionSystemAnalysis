@@ -1,4 +1,4 @@
-# Students Grading Data Analysis
+# Students Performance Data Analysis
 This project performs visual and statistical analysis on a student performance dataset, including attendance, grades, parents influence, stress and study habits.
 
 ## Requirements
